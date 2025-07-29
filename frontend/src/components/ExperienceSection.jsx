@@ -1,10 +1,46 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from './ui/card';
 import { Rocket, Star, Target } from 'lucide-react';
-import { portfolioData } from '../mock';
+import { publicApi } from '../utils/api';
+import { portfolioData } from '../mock'; // Fallback
 
 const ExperienceSection = () => {
-  const { experience } = portfolioData;
+  const [experience, setExperience] = useState(portfolioData.experience);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchExperience = async () => {
+      try {
+        const response = await publicApi.getExperience();
+        if (response.success && response.data) {
+          setExperience(response.data);
+        }
+      } catch (error) {
+        console.error('Error fetching experience:', error);
+        // Keep using mock data as fallback
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchExperience();
+  }, []);
+
+  if (loading) {
+    return (
+      <section id="experience" className="py-20 px-4 relative z-10">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-16">
+            <div className="h-12 bg-slate-800/40 rounded-lg animate-pulse mb-4 mx-auto max-w-md"></div>
+            <div className="w-24 h-1 bg-slate-800/40 mx-auto animate-pulse"></div>
+          </div>
+          <div className="flex justify-center">
+            <div className="h-96 w-full max-w-4xl bg-slate-800/40 rounded-lg animate-pulse"></div>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section id="experience" className="py-20 px-4 relative z-10">

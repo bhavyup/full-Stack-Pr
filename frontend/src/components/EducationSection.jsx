@@ -1,10 +1,46 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from './ui/card';
 import { GraduationCap, Calendar, MapPin } from 'lucide-react';
-import { portfolioData } from '../mock';
+import { publicApi } from '../utils/api';
+import { portfolioData } from '../mock'; // Fallback
 
 const EducationSection = () => {
-  const { education } = portfolioData;
+  const [education, setEducation] = useState(portfolioData.education);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchEducation = async () => {
+      try {
+        const response = await publicApi.getEducation();
+        if (response.success && response.data) {
+          setEducation(response.data);
+        }
+      } catch (error) {
+        console.error('Error fetching education:', error);
+        // Keep using mock data as fallback
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchEducation();
+  }, []);
+
+  if (loading) {
+    return (
+      <section id="education" className="py-20 px-4 relative z-10">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-16">
+            <div className="h-12 bg-slate-800/40 rounded-lg animate-pulse mb-4 mx-auto max-w-md"></div>
+            <div className="w-24 h-1 bg-slate-800/40 mx-auto animate-pulse"></div>
+          </div>
+          <div className="flex justify-center">
+            <div className="h-80 w-full max-w-2xl bg-slate-800/40 rounded-lg animate-pulse"></div>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section id="education" className="py-20 px-4 relative z-10">
@@ -47,10 +83,13 @@ const EducationSection = () => {
                 <div className="mt-6 space-y-2">
                   <div className="flex justify-between text-sm text-slate-400">
                     <span>Progress</span>
-                    <span>75%</span>
+                    <span>{education.progress || 75}%</span>
                   </div>
                   <div className="w-full bg-slate-700 rounded-full h-3">
-                    <div className="bg-gradient-to-r from-cyan-400 to-purple-400 h-3 rounded-full transition-all duration-1000" style={{ width: '75%' }}></div>
+                    <div 
+                      className="bg-gradient-to-r from-cyan-400 to-purple-400 h-3 rounded-full transition-all duration-1000" 
+                      style={{ width: `${education.progress || 75}%` }}
+                    ></div>
                   </div>
                   <p className="text-xs text-slate-400 text-center">Expected graduation: 2026</p>
                 </div>

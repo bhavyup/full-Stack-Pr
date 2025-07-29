@@ -1,12 +1,32 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
 import { Zap, Beaker, Lightbulb, ArrowRight } from 'lucide-react';
-import { portfolioData } from '../mock';
+import { publicApi } from '../utils/api';
+import { portfolioData } from '../mock'; // Fallback
 
 const ExperimentsSection = () => {
-  const { experiments } = portfolioData;
+  const [experiments, setExperiments] = useState(portfolioData.experiments);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchExperiments = async () => {
+      try {
+        const response = await publicApi.getExperiments();
+        if (response.success && response.data) {
+          setExperiments(response.data);
+        }
+      } catch (error) {
+        console.error('Error fetching experiments:', error);
+        // Keep using mock data as fallback
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchExperiments();
+  }, []);
 
   const getStatusIcon = (status) => {
     return status === 'active' ? 
@@ -19,6 +39,25 @@ const ExperimentsSection = () => {
       <Badge className="bg-yellow-500/20 text-yellow-400 border-yellow-400/50">Active</Badge> :
       <Badge className="bg-blue-500/20 text-blue-400 border-blue-400/50">Planning</Badge>;
   };
+
+  if (loading) {
+    return (
+      <section id="experiments" className="py-20 px-4 relative z-10">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <div className="h-12 bg-slate-800/40 rounded-lg animate-pulse mb-4 mx-auto max-w-md"></div>
+            <div className="w-24 h-1 bg-slate-800/40 mx-auto animate-pulse mb-4"></div>
+            <div className="h-4 bg-slate-800/40 rounded-lg animate-pulse mx-auto max-w-lg"></div>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+            {[...Array(2)].map((_, i) => (
+              <div key={i} className="h-48 bg-slate-800/40 rounded-lg animate-pulse"></div>
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section id="experiments" className="py-20 px-4 relative z-10">
@@ -36,7 +75,7 @@ const ExperimentsSection = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
           {experiments.map((experiment, index) => (
             <Card
-              key={index}
+              key={experiment.id || index}
               className="bg-slate-800/40 backdrop-blur-lg border border-slate-700/50 hover:border-cyan-400/50 transition-all duration-300 transform hover:scale-105 hover:shadow-xl hover:shadow-cyan-500/10 group"
             >
               <CardHeader className="pb-4">

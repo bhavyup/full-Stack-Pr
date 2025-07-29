@@ -1,11 +1,31 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from './ui/card';
 import { Badge } from './ui/badge';
 import { CheckCircle, Clock, Calendar } from 'lucide-react';
-import { portfolioData } from '../mock';
+import { publicApi } from '../utils/api';
+import { portfolioData } from '../mock'; // Fallback
 
 const LearningJourneySection = () => {
-  const { learningJourney } = portfolioData;
+  const [learningJourney, setLearningJourney] = useState(portfolioData.learningJourney);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchLearningJourney = async () => {
+      try {
+        const response = await publicApi.getLearningJourney();
+        if (response.success && response.data) {
+          setLearningJourney(response.data);
+        }
+      } catch (error) {
+        console.error('Error fetching learning journey:', error);
+        // Keep using mock data as fallback
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchLearningJourney();
+  }, []);
 
   const getStatusIcon = (status) => {
     switch (status) {
@@ -42,6 +62,31 @@ const LearningJourneySection = () => {
     }
   };
 
+  if (loading) {
+    return (
+      <section id="learning" className="py-20 px-4 relative z-10">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-16">
+            <div className="h-12 bg-slate-800/40 rounded-lg animate-pulse mb-4 mx-auto max-w-md"></div>
+            <div className="w-24 h-1 bg-slate-800/40 mx-auto animate-pulse mb-4"></div>
+            <div className="h-4 bg-slate-800/40 rounded-lg animate-pulse mx-auto max-w-lg"></div>
+          </div>
+          <div className="space-y-12">
+            {[...Array(3)].map((_, i) => (
+              <div key={i} className="flex items-center gap-8">
+                <div className="flex-1">
+                  <div className="h-32 bg-slate-800/40 rounded-lg animate-pulse"></div>
+                </div>
+                <div className="w-16 h-16 bg-slate-800/40 rounded-full animate-pulse"></div>
+                <div className="flex-1"></div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section id="learning" className="py-20 px-4 relative z-10">
       <div className="max-w-6xl mx-auto">
@@ -62,7 +107,7 @@ const LearningJourneySection = () => {
 
           <div className="space-y-12">
             {learningJourney.map((phase, index) => (
-              <div key={index} className={`flex items-center ${index % 2 === 0 ? 'flex-row' : 'flex-row-reverse'} gap-8`}>
+              <div key={phase.id || index} className={`flex items-center ${index % 2 === 0 ? 'flex-row' : 'flex-row-reverse'} gap-8`}>
                 {/* Timeline Node */}
                 <div className="flex-1">
                   <Card className={`bg-slate-800/40 backdrop-blur-lg border border-slate-700/50 hover:border-cyan-400/50 transition-all duration-300 transform hover:scale-105 hover:shadow-xl hover:shadow-cyan-500/10 group ${index % 2 === 0 ? 'mr-8' : 'ml-8'}`}>

@@ -6,12 +6,11 @@ import os
 import logging
 from pathlib import Path
 from datetime import timedelta
-from typing import List
 
 # Import our models and database
-from .models import *
-from .database import Database
-from .auth import authenticate_admin, create_access_token, get_current_admin
+from models import *
+from database import Database
+from auth import authenticate_admin, create_access_token, get_current_admin
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')

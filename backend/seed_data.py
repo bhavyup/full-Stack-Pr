@@ -1,5 +1,9 @@
-from .database import Database
-from .auth import get_password_hash
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+
+from database import Database
+from auth import get_password_hash
 from datetime import datetime
 import asyncio
 

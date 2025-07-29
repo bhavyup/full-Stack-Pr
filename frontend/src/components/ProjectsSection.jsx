@@ -1,12 +1,32 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
 import { ExternalLink, GitlabIcon as Github, Clock, CheckCircle } from 'lucide-react';
-import { portfolioData } from '../mock';
+import { publicApi } from '../utils/api';
+import { portfolioData } from '../mock'; // Fallback
 
 const ProjectsSection = () => {
-  const { projects } = portfolioData;
+  const [projects, setProjects] = useState(portfolioData.projects);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const response = await publicApi.getProjects();
+        if (response.success && response.data) {
+          setProjects(response.data);
+        }
+      } catch (error) {
+        console.error('Error fetching projects:', error);
+        // Keep using mock data as fallback
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProjects();
+  }, []);
 
   const getStatusIcon = (status) => {
     return status === 'completed' ? 
@@ -19,6 +39,25 @@ const ProjectsSection = () => {
       <Badge className="bg-green-500/20 text-green-400 border-green-400/50">Completed</Badge> :
       <Badge className="bg-yellow-500/20 text-yellow-400 border-yellow-400/50">Coming Soon</Badge>;
   };
+
+  if (loading) {
+    return (
+      <section id="projects" className="py-20 px-4 relative z-10">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <div className="h-12 bg-slate-800/40 rounded-lg animate-pulse mb-4 mx-auto max-w-md"></div>
+            <div className="w-24 h-1 bg-slate-800/40 mx-auto animate-pulse mb-4"></div>
+            <div className="h-4 bg-slate-800/40 rounded-lg animate-pulse mx-auto max-w-lg"></div>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {[...Array(2)].map((_, i) => (
+              <div key={i} className="h-80 bg-slate-800/40 rounded-lg animate-pulse"></div>
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section id="projects" className="py-20 px-4 relative z-10">
@@ -66,25 +105,42 @@ const ProjectsSection = () => {
                   {project.description}
                 </p>
 
+                {/* Technologies */}
+                {project.technologies && project.technologies.length > 0 && (
+                  <div className="flex flex-wrap gap-2 mb-6">
+                    {project.technologies.map((tech, index) => (
+                      <Badge key={index} variant="outline" className="border-slate-600 text-slate-300">
+                        {tech}
+                      </Badge>
+                    ))}
+                  </div>
+                )}
+
                 {/* Action Buttons */}
                 <div className="flex gap-3">
                   {project.status === 'completed' ? (
                     <>
-                      <Button
-                        size="sm"
-                        className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white flex items-center gap-2"
-                      >
-                        <ExternalLink className="w-4 h-4" />
-                        View Live
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="border-slate-600 text-slate-300 hover:text-white hover:border-white flex items-center gap-2"
-                      >
-                        <Github className="w-4 h-4" />
-                        Code
-                      </Button>
+                      {project.liveUrl && (
+                        <Button
+                          size="sm"
+                          className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white flex items-center gap-2"
+                          onClick={() => window.open(project.liveUrl, '_blank')}
+                        >
+                          <ExternalLink className="w-4 h-4" />
+                          View Live
+                        </Button>
+                      )}
+                      {project.githubUrl && (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="border-slate-600 text-slate-300 hover:text-white hover:border-white flex items-center gap-2"
+                          onClick={() => window.open(project.githubUrl, '_blank')}
+                        >
+                          <Github className="w-4 h-4" />
+                          Code
+                        </Button>
+                      )}
                     </>
                   ) : (
                     <Button

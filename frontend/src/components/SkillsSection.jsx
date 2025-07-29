@@ -1,21 +1,41 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Badge } from './ui/badge';
 import { Code2, CloudRain, Database, Wrench, Brain, Users } from 'lucide-react';
-import { portfolioData } from '../mock';
+import { publicApi } from '../utils/api';
+import { portfolioData } from '../mock'; // Fallback
 
 const SkillsSection = () => {
-  const { skills } = portfolioData;
+  const [skills, setSkills] = useState(portfolioData.skills);
+  const [loading, setLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState('current');
 
+  useEffect(() => {
+    const fetchSkills = async () => {
+      try {
+        const response = await publicApi.getSkills();
+        if (response.success && response.data) {
+          setSkills(response.data);
+        }
+      } catch (error) {
+        console.error('Error fetching skills:', error);
+        // Keep using mock data as fallback
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSkills();
+  }, []);
+
   const categories = [
-    { id: 'current', label: 'Current Skills', icon: Code2, skills: skills.current, color: 'cyan' },
-    { id: 'learning', label: 'Learning', icon: Brain, skills: skills.learning, color: 'purple' },
-    { id: 'tools', label: 'Tools', icon: Wrench, skills: skills.tools, color: 'pink' },
-    { id: 'programming', label: 'Programming', icon: Code2, skills: skills.programming, color: 'blue' },
-    { id: 'database', label: 'Database', icon: Database, skills: skills.database, color: 'green' },
-    { id: 'cloud', label: 'Cloud', icon: CloudRain, skills: skills.cloud, color: 'indigo' },
-    { id: 'soft', label: 'Soft Skills', icon: Users, skills: skills.soft, color: 'orange' }
+    { id: 'current', label: 'Current Skills', icon: Code2, skills: skills.current || [], color: 'cyan' },
+    { id: 'learning', label: 'Learning', icon: Brain, skills: skills.learning || [], color: 'purple' },
+    { id: 'tools', label: 'Tools', icon: Wrench, skills: skills.tools || [], color: 'pink' },
+    { id: 'programming', label: 'Programming', icon: Code2, skills: skills.programming || [], color: 'blue' },
+    { id: 'database', label: 'Database', icon: Database, skills: skills.database || [], color: 'green' },
+    { id: 'cloud', label: 'Cloud', icon: CloudRain, skills: skills.cloud || [], color: 'indigo' },
+    { id: 'soft', label: 'Soft Skills', icon: Users, skills: skills.soft || [], color: 'orange' }
   ];
 
   const getColorClasses = (color) => {
@@ -30,6 +50,25 @@ const SkillsSection = () => {
     };
     return colors[color] || colors.cyan;
   };
+
+  if (loading) {
+    return (
+      <section id="skills" className="py-20 px-4 relative z-10">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <div className="h-12 bg-slate-800/40 rounded-lg animate-pulse mb-4 mx-auto max-w-md"></div>
+            <div className="w-24 h-1 bg-slate-800/40 mx-auto animate-pulse mb-4"></div>
+            <div className="h-4 bg-slate-800/40 rounded-lg animate-pulse mx-auto max-w-lg"></div>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {[...Array(8)].map((_, i) => (
+              <div key={i} className="h-32 bg-slate-800/40 rounded-lg animate-pulse"></div>
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section id="skills" className="py-20 px-4 relative z-10">

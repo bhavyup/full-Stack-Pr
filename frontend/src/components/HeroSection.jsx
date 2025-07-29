@@ -1,10 +1,30 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from './ui/button';
 import { ArrowDown, Mail } from 'lucide-react';
-import { portfolioData } from '../mock';
+import { publicApi, handleApiError } from '../utils/api';
+import { portfolioData } from '../mock'; // Fallback
 
 const HeroSection = () => {
-  const { profile } = portfolioData;
+  const [profile, setProfile] = useState(portfolioData.profile);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const response = await publicApi.getProfile();
+        if (response.success && response.data) {
+          setProfile(response.data);
+        }
+      } catch (error) {
+        console.error('Error fetching profile:', error);
+        // Keep using mock data as fallback
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProfile();
+  }, []);
 
   const scrollToSection = (sectionId) => {
     const element = document.getElementById(sectionId);
@@ -12,6 +32,18 @@ const HeroSection = () => {
       element.scrollIntoView({ behavior: 'smooth' });
     }
   };
+
+  if (loading) {
+    return (
+      <section className="min-h-screen flex items-center justify-center relative z-10 px-4">
+        <div className="text-center">
+          <div className="w-48 h-48 rounded-full bg-slate-800/40 animate-pulse mx-auto mb-8"></div>
+          <div className="h-12 bg-slate-800/40 rounded-lg animate-pulse mb-6"></div>
+          <div className="h-6 bg-slate-800/40 rounded-lg animate-pulse mb-8"></div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="min-h-screen flex items-center justify-center relative z-10 px-4">

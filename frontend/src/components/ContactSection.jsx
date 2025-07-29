@@ -1,20 +1,41 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Textarea } from './ui/textarea';
 import { Mail, Linkedin, MessageCircle, Send, MapPin } from 'lucide-react';
 import { useToast } from '../hooks/use-toast';
-import { portfolioData } from '../mock';
+import { publicApi, handleApiError } from '../utils/api';
+import { portfolioData } from '../mock'; // Fallback
 
 const ContactSection = () => {
-  const { profile } = portfolioData;
+  const [profile, setProfile] = useState(portfolioData.profile);
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
   const { toast } = useToast();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     message: ''
   });
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const response = await publicApi.getProfile();
+        if (response.success && response.data) {
+          setProfile(response.data);
+        }
+      } catch (error) {
+        console.error('Error fetching profile:', error);
+        // Keep using mock data as fallback
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProfile();
+  }, []);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -24,15 +45,43 @@ const ContactSection = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Mock form submission
-    toast({
-      title: "Message Sent!",
-      description: "Thank you for reaching out. I'll get back to you soon!",
-    });
-    setFormData({ name: '', email: '', message: '' });
+    setSubmitting(true);
+
+    try {
+      const response = await publicApi.submitContactForm(formData);
+      if (response.success) {
+        toast({
+          title: "Message Sent!",
+          description: response.message || "Thank you for reaching out. I'll get back to you soon!",
+        });
+        setFormData({ name: '', email: '', message: '' });
+      }
+    } catch (error) {
+      handleApiError(error, toast);
+    } finally {
+      setSubmitting(false);
+    }
   };
+
+  if (loading) {
+    return (
+      <section id="contact" className="py-20 px-4 relative z-10">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <div className="h-12 bg-slate-800/40 rounded-lg animate-pulse mb-4 mx-auto max-w-md"></div>
+            <div className="w-24 h-1 bg-slate-800/40 mx-auto animate-pulse mb-4"></div>
+            <div className="h-4 bg-slate-800/40 rounded-lg animate-pulse mx-auto max-w-lg"></div>
+          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+            <div className="h-96 bg-slate-800/40 rounded-lg animate-pulse"></div>
+            <div className="h-96 bg-slate-800/40 rounded-lg animate-pulse"></div>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section id="contact" className="py-20 px-4 relative z-10">
@@ -99,7 +148,7 @@ const ContactSection = () => {
                     </div>
                     <div>
                       <div className="text-white font-semibold font-['Orbitron']">Location</div>
-                      <div className="text-green-400 text-sm font-['Poppins']">Odisha, India</div>
+                      <div className="text-green-400 text-sm font-['Poppins']">{profile.location}</div>
                     </div>
                   </div>
                 </div>
@@ -144,6 +193,7 @@ const ContactSection = () => {
                     placeholder="Your name"
                     className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:border-cyan-400"
                     required
+                    disabled={submitting}
                   />
                 </div>
 
@@ -157,6 +207,7 @@ const ContactSection = () => {
                     placeholder="your.email@example.com"
                     className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:border-cyan-400"
                     required
+                    disabled={submitting}
                   />
                 </div>
 
@@ -170,15 +221,17 @@ const ContactSection = () => {
                     rows={5}
                     className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-400 focus:border-cyan-400 resize-none"
                     required
+                    disabled={submitting}
                   />
                 </div>
 
                 <Button
                   type="submit"
-                  className="w-full bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-600 hover:to-purple-700 text-white py-3 flex items-center justify-center gap-2"
+                  disabled={submitting}
+                  className="w-full bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-600 hover:to-purple-700 text-white py-3 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <Send className="w-4 h-4" />
-                  Send Message
+                  {submitting ? 'Sending...' : 'Send Message'}
                 </Button>
               </form>
             </CardContent>

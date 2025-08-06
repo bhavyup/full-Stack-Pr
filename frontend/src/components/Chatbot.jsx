@@ -1,9 +1,11 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { MessageCircle, Send, X, Bot, User } from 'lucide-react';
 import { chatbotResponses } from '../mock';
+import GradientText from '@/ui/TextAnimations/GradientText/GradientText';
 
 const Chatbot = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -15,6 +17,7 @@ const Chatbot = () => {
     }
   ]);
   const [inputMessage, setInputMessage] = useState('');
+  const navigate = useNavigate();
   const messagesEndRef = useRef(null);
 
   const scrollToBottom = () => {
@@ -39,7 +42,10 @@ const Chatbot = () => {
       return chatbotResponses["education"];
     } else if (lowerMessage.includes('contact') || lowerMessage.includes('email') || lowerMessage.includes('reach')) {
       return chatbotResponses["contact"];
-    } else {
+    } else if (lowerMessage.includes("backend") || lowerMessage.includes("admin")) {
+      navigate("/admin/login");
+    }
+     else {
       return chatbotResponses["default"];
     }
   };
@@ -96,7 +102,7 @@ const Chatbot = () => {
                 <div className="w-8 h-8 bg-gradient-to-r from-cyan-400 to-purple-400 rounded-full flex items-center justify-center">
                   <Bot className="w-4 h-4 text-white" />
                 </div>
-                Shreeya's AI Assistant
+                <GradientText colors={["#40ffaa", "#4079ff", "#22d3ee", "#4079ff", "#22d3ee"]} className="text-lg font-semibold font-['Orbitron']" animationSpeed={5}>Shreeya's AI Assistant</GradientText>
                 <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse ml-auto"></div>
               </CardTitle>
             </CardHeader>

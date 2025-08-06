@@ -5,7 +5,7 @@ export const portfolioData = {
     headline: "Crafting Scalable Cloud Solutions with Creativity and Code",
     bio: "Hi, I'm Shreeya Das—a tech enthusiast passionate about building creative and intelligent solutions using AI-powered tools. My expertise lies in exploring automation, web technologies, and modern cloud platforms. Currently, I'm focused on learning cloud computing and experimenting with AI agents to create futuristic user experiences. My vision? To design systems that blend innovation, usability, and intelligence for the next generation of the web.",
     highlights: "Cloud Explorer | Automation Architect | Agile Mindset",
-    profileImage: "https://images.unsplash.com/photo-1494790108755-2616c2ecbd5a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80",
+    profileImage: "https://wallpapers.com/user-profile-png",
     email: "missiyaa.111@gmail.com",
     linkedin: "linkedin.com/in/shreeya-swarupa-das-660689289"
   },
@@ -64,6 +64,11 @@ export const portfolioData = {
       status: "planned"
     }
   ],
+
+  growthMindset: {
+    title: "Growth Mindset",
+    quote: "\"The journey of a thousand miles begins with a single step. Every skill learned, every challenge overcome, brings me closer to my goals.\""
+  },
 
   experiments: [
     {

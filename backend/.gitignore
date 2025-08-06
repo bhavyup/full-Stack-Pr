@@ -1,0 +1,17 @@
+# Environment variables
+# --- IMPORTANT: This keeps your secrets safe ---
+.env
+
+# Python virtual environment
+# --- Prevents uploading thousands of unnecessary files ---
+.venv/
+venv/
+env/
+
+# Python cache files
+__pycache__/
+*.pyc
+
+# IDE and editor folders
+.vscode/
+.idea/

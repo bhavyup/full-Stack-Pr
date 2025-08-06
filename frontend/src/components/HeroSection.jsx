@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { Button } from './ui/button';
-import { ArrowDown, Mail } from 'lucide-react';
-import { publicApi, handleApiError } from '../utils/api';
-import { portfolioData } from '../mock'; // Fallback
+import React, { useState, useEffect } from "react";
+import { Button } from "./ui/button";
+import { ArrowDown, Mail } from "lucide-react";
+import { publicApi, handleApiError } from "../utils/api";
+import { portfolioData } from "../mock"; // Fallback
+import ShinyText from "./ui/ShinyText";
+import GradientText from "@/ui/TextAnimations/GradientText/GradientText";
 
 const HeroSection = () => {
   const [profile, setProfile] = useState(portfolioData.profile);
@@ -16,7 +18,7 @@ const HeroSection = () => {
           setProfile(response.data);
         }
       } catch (error) {
-        console.error('Error fetching profile:', error);
+        console.error("Error fetching profile:", error);
         // Keep using mock data as fallback
       } finally {
         setLoading(false);
@@ -29,7 +31,7 @@ const HeroSection = () => {
   const scrollToSection = (sectionId) => {
     const element = document.getElementById(sectionId);
     if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
+      element.scrollIntoView({ behavior: "smooth" });
     }
   };
 
@@ -51,7 +53,7 @@ const HeroSection = () => {
         {/* Profile Image */}
         <div className="mb-8 flex justify-center">
           <div className="relative">
-            <div className="w-48 h-48 rounded-full overflow-hidden border-4 border-gradient-to-r from-cyan-400 to-purple-400 p-1 bg-gradient-to-r from-cyan-400 to-purple-400">
+            <div className="w-48 h-48 rounded-full overflow-hidden border-4 border-gradient-to-r p-1 bg-gradient-to-r from-cyan-400 to-purple-400">
               <img
                 src={profile.profileImage}
                 alt={profile.name}
@@ -67,23 +69,24 @@ const HeroSection = () => {
           {profile.name}
         </h1>
 
-        {/* Headline */}
-        <p className="text-xl md:text-2xl text-slate-300 mb-8 max-w-3xl mx-auto font-['Poppins'] leading-relaxed">
-          {profile.headline}
-        </p>
-
+        <ShinyText
+          text={profile.headline}
+          speed={2}
+          disabled={false}
+          className="text-2xl mb-8 max-w-3xl mx-auto font-['Poppins'] leading-relaxed"
+        />
         {/* CTA Buttons */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
           <Button
-            onClick={() => scrollToSection('about')}
+            onClick={() => scrollToSection("about")}
             className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white px-8 py-3 rounded-full transition-all duration-300 transform hover:scale-105 flex items-center gap-2 shadow-lg shadow-cyan-500/25"
           >
             Explore My Universe
             <ArrowDown className="w-4 h-4 animate-bounce" />
           </Button>
-          
+
           <Button
-            onClick={() => scrollToSection('contact')}
+            onClick={() => scrollToSection("contact")}
             variant="outline"
             className="border-2 border-cyan-400 text-cyan-400 hover:bg-cyan-400 hover:text-slate-900 px-8 py-3 rounded-full transition-all duration-300 transform hover:scale-105 flex items-center gap-2"
           >

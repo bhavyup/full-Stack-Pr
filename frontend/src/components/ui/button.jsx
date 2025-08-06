@@ -10,15 +10,17 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          "bg-primary text-primary-foreground shadow hover:bg-primary/90",
+          "bg-primary text-primary-foreground shadow hover:bg-primary/90 focus:outline-none focus:ring-0 focus-visible:ring-0",
         destructive:
-          "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90",
+          "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90 focus:outline-none focus:ring-0 focus-visible:ring-0",
+        destructivelg: "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90 h-11 rounded-md px-8 focus:outline-none focus:ring-0 focus-visible:ring-0",
         outline:
           "border border-input shadow-sm hover:bg-accent hover:text-accent-foreground",
         secondary:
-          "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80",
-        ghost: "hover:bg-accent hover:text-accent-foreground",
-        link: "text-primary underline-offset-4 hover:underline",
+          "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80 focus:outline-none focus:ring-0 focus-visible:ring-0",
+        ghost: "hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-0 focus-visible:ring-0",
+        link: "text-primary underline-offset-4 hover:underline focus:outline-none focus:ring-0 focus-visible:ring-0",
+        save: "bg-gradient-to-r from-purple-500 to-blue-500 text-white shadow hover:bg-gradient-to-l focus:outline-none focus:ring-0 focus-visible:ring-0",
       },
       size: {
         default: "h-9 px-4 py-2",

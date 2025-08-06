@@ -3,6 +3,7 @@ import { Card, CardContent } from './ui/card';
 import { Sparkles } from 'lucide-react';
 import { publicApi } from '../utils/api';
 import { portfolioData } from '../mock'; // Fallback
+import GradientText from '@/ui/TextAnimations/GradientText/GradientText';
 
 const AboutSection = () => {
   const [profile, setProfile] = useState(portfolioData.profile);
@@ -59,7 +60,7 @@ const AboutSection = () => {
             <CardContent className="p-8">
               <div className="flex items-center gap-3 mb-6">
                 <Sparkles className="w-6 h-6 text-cyan-400 group-hover:animate-spin transition-all duration-300" />
-                <h3 className="text-2xl font-semibold text-white font-['Orbitron']">My Story</h3>
+                <GradientText colors={["#40ffaa", "#4079ff", "#40ffaa", "#4079ff", "#40ffaa"]} animationSpeed={5}><h3 className="text-2xl font-semibold font-['Orbitron']">My Story</h3></GradientText>
               </div>
               <p className="text-slate-300 leading-relaxed font-['Poppins'] text-lg">
                 {profile.bio}
@@ -72,7 +73,7 @@ const AboutSection = () => {
             <CardContent className="p-8">
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-6 h-6 bg-gradient-to-r from-cyan-400 to-purple-400 rounded-full animate-pulse"></div>
-                <h3 className="text-2xl font-semibold text-white font-['Orbitron']">Quick Highlights</h3>
+                <GradientText colors={["#40ffaa", "#4079ff", "#40ffaa", "#4079ff", "#40ffaa"]} animationSpeed={5}><h3 className="text-2xl font-semibold font-['Orbitron']">Quick Highlights</h3></GradientText>
               </div>
               
               <div className="space-y-4">
@@ -84,7 +85,7 @@ const AboutSection = () => {
                 
                 <div className="grid grid-cols-3 gap-4 text-center">
                   <div className="p-4 bg-slate-900/30 rounded-lg hover:bg-slate-900/50 transition-all duration-300">
-                    <div className="text-2xl font-bold text-cyan-400 font-['Orbitron']">3+</div>
+                    <div className="text-2xl font-bold text-cyan-400 font-['Orbitron']">5+</div>
                     <div className="text-sm text-slate-400">Languages</div>
                   </div>
                   <div className="p-4 bg-slate-900/30 rounded-lg hover:bg-slate-900/50 transition-all duration-300">
